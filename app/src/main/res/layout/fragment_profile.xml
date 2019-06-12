@@ -243,28 +243,12 @@
                     android:orientation="vertical"
                     android:padding="10dp">
 
-                    <LinearLayout
+                    <android.support.v7.widget.RecyclerView
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="@drawable/square_info"
-                        android:gravity="center"></LinearLayout>
+                        android:layout_height="wrap_content"
+                        android:id="@+id/RV">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="5dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/square_info"
-                        android:gravity="center"></LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="5dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/square_info"
-                        android:gravity="center"></LinearLayout>
+                    </android.support.v7.widget.RecyclerView>
 
 
                 </LinearLayout>

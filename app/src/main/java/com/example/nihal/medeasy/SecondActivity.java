@@ -56,18 +56,20 @@ public class SecondActivity extends AppCompatActivity {
         DrugsAdapter adapter = new DrugsAdapter(drugs);
         recyclerview.setAdapter(adapter);
 
-        //retrieveData();
+        retrieveData();
     }
 
 
     public void retrieveData() {
-        mDatabase.child("Users").child("1UbTozyso3SR8ZY7y0O6mZxTVqd2").child("Roshetat").addValueEventListener(new ValueEventListener() {
+        mDatabase.child("Users").child("1UbTozyso3SR8ZY7y0O6mZxTVqd2").child("Roshetat")
+                .addValueEventListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (final DataSnapshot dataSnap : dataSnapshot.getChildren()) {
 
                      x=dataSnap.getKey();
+                    Log.d("TTTTTTTTT", "onDataChange: "+dataSnap.getChildren());
                     mDatabase.child("Users").child("1UbTozyso3SR8ZY7y0O6mZxTVqd2")
                             .child("Roshetat").child(dataSnap.getKey()).child("Rosheta").child("Medicine")
                             .addValueEventListener(new ValueEventListener() {
@@ -79,6 +81,8 @@ public class SecondActivity extends AppCompatActivity {
                                     // l 7d hena kda ana m3aya el keys elly elly 2abl el med 3la tool
 
                                     for (final DataSnapshot dataSnap11 : dataSnapshot11.getChildren()) {
+                                        Log.d("TTT", "onDataChange: "+dataSnap11.getChildren());
+
                                         mDatabase.child("Users").child("1UbTozyso3SR8ZY7y0O6mZxTVqd2")
                                                 .child("Roshetat").child(x).child("Rosheta").child("Medicine")
                                                 .child(dataSnap11.getKey()).addValueEventListener(new ValueEventListener() {

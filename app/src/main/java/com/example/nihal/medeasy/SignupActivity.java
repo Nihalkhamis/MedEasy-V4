@@ -114,21 +114,23 @@ public class SignupActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
 
                                 final UserModel user = new UserModel(
-                                        UserNameInFireB,
-                                        AddressInFireB,
-                                        OccupationInFireB,
-                                        FamilyHistoryLinkInFireB,
-                                        WeightInFireB,
-                                        HeightInFireB,
-                                        YearOfBirthInFireB,
-                                        PassWordInFireB,
-                                        UserPhoneInFireB,
+                                        UserNameInFireB+"",
+                                        YearOfBirthInFireB+"",
+                                        AddressInFireB+"",
+                                        OccupationInFireB+"",
+                                        FamilyHistoryLinkInFireB+"",
+                                        WeightInFireB+"",
+                                        HeightInFireB+"",
+                                        PassWordInFireB+"",
+                                        UserPhoneInFireB+"",
                                         "" + type
                                         , "" + gender
                                         ,""+FirebaseAuth.getInstance().getUid()
                                 );
 
-                                FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getUid()).child("Info").setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                FirebaseDatabase.getInstance().getReference("Users")
+                                        .child(FirebaseAuth.getInstance().getUid()).child("Info")
+                                        .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
 
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {

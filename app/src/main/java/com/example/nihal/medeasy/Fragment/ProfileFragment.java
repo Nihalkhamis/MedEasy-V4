@@ -5,13 +5,19 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.nihal.medeasy.Adapters.AddMedcineAdapter;
+import com.example.nihal.medeasy.Models.Drugs;
 import com.example.nihal.medeasy.Models.UserModel;
 import com.example.nihal.medeasy.R;
+import com.example.nihal.medeasy.Utils.Constants;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -24,7 +30,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,7 +47,10 @@ public class ProfileFragment extends Fragment {
     private com.github.mikephil.charting.charts.LineChart chart;
     private com.github.mikephil.charting.charts.LineChart chart1;
     CircleImageView profile_image;
-    TextView name,gender,weight,height,age,blood_type,relation;
+    TextView name, gender, weight, height, age, blood_type, relation;
+    RecyclerView RV;
+    AddMedcineAdapter addMedcineAdapter;
+    ArrayList<Drugs> drugs;
 
     private DatabaseReference mDatabase;
 
@@ -52,36 +63,59 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view=inflater.inflate(R.layout.fragment_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         //declartion
         chart = view.findViewById(R.id.chart1);
         chart1 = view.findViewById(R.id.chart1);
-        profile_image=view.findViewById(R.id.profile_image);
-        name=view.findViewById(R.id.name);
-        gender=view.findViewById(R.id.gender);
-        weight=view.findViewById(R.id.weight);
-        height=view.findViewById(R.id.height);
-        age=view.findViewById(R.id.age);
-        blood_type=view.findViewById(R.id.blood_type);
-        relation=view.findViewById(R.id.relation);
+        profile_image = view.findViewById(R.id.profile_image);
+        name = view.findViewById(R.id.name);
+        gender = view.findViewById(R.id.gender);
+        weight = view.findViewById(R.id.weight);
+        height = view.findViewById(R.id.height);
+        age = view.findViewById(R.id.age);
+        blood_type = view.findViewById(R.id.blood_type);
+        relation = view.findViewById(R.id.relation);
         //returnData();
         draw_chart1();
         draw_chart2();
+        RV = view.findViewById(R.id.RV);
+        RV.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        drugs = new ArrayList<>();
+        addMedcineAdapter = new AddMedcineAdapter(drugs, new AddMedcineAdapter.OnItemClick() {
+            @Override
+            public void setOnItemClick(int position) {
+
+            }
+        });
+        RV.setAdapter(addMedcineAdapter);
+        retrieveMedicine();
         return view;
     }
-    private void returnData(){
-        mDatabase.child("").addValueEventListener(new ValueEventListener() {
+
+    private void returnData() {
+        mDatabase.child("Users").child(Hawk.get(Constants.userID) + "")
+                .child("Info").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    UserModel userModel=dataSnapshot.getValue(UserModel.class);
-                    name.setText(userModel.getUserName()+"");
-                    gender.setText(userModel.getUserName()+"");
+                if (dataSnapshot.exists()) {
+                    UserModel userModel = dataSnapshot.getValue(UserModel.class);
+                    name.setText(userModel.getUserName() + "");
+                    if (userModel.getGender().equals("0")) {
+                        gender.setText("Male");
+
+                    } else {
+                        gender.setText("female");
+
+                    }
                     weight.setText(userModel.getWeight());
                     height.setText(userModel.getHeight());
-                    age.setText((Calendar.getInstance().get(Calendar.YEAR))-Integer.parseInt(userModel.getYearOfBirth()));
+
+                    Log.d("TTTT", "onDataChange: " + Calendar.getInstance().get(Calendar.YEAR));
+                    Log.d("TTTT", "onDataChange: " + Integer.parseInt(userModel.getYearOfBirth()));
+                    age.setText(((Calendar.getInstance().get(Calendar.YEAR))
+                            - Integer.parseInt(userModel.getYearOfBirth())) + "");
                     //blood_type.setText(userModel.get());
                     //relation.setText(userModel.get());
                 }
@@ -93,7 +127,8 @@ public class ProfileFragment extends Fragment {
             }
         });
     }
-    private void draw_chart1(){
+
+    private void draw_chart1() {
         chart.setViewPortOffsets(0, 0, 0, 0);
         chart.setBackgroundResource(R.color.colorPrimary);
 
@@ -128,18 +163,18 @@ public class ProfileFragment extends Fragment {
         chart.getAxisRight().setEnabled(true);
 
 
-
         chart.getLegend().setEnabled(true);
 
         chart.animateXY(2000, 2000);
 
         // don't forget to refresh the drawing
-        setData1(11,12);
+        setData1(11, 12);
 
         chart.invalidate();
 
     }
-    private void draw_chart2(){
+
+    private void draw_chart2() {
         chart1.setViewPortOffsets(0, 0, 0, 0);
         chart1.setBackgroundResource(R.color.colorPrimary);
         // no description text
@@ -166,13 +201,12 @@ public class ProfileFragment extends Fragment {
         chart1.getAxisRight().setEnabled(true);
 
 
-
         chart1.getLegend().setEnabled(true);
 
         chart1.animateXY(2000, 2000);
 
         // don't forget to refresh the drawing
-        setData2(11,12);
+        setData2(11, 12);
 
         chart1.invalidate();
 
@@ -226,6 +260,7 @@ public class ProfileFragment extends Fragment {
             chart.setData(data);
         }
     }
+
     private void setData2(int count, float range) {
 
         ArrayList<Entry> values = new ArrayList<>();
@@ -273,5 +308,44 @@ public class ProfileFragment extends Fragment {
             // set data
             chart1.setData(data);
         }
+    }
+
+    private void retrieveMedicine() {
+
+        final Query q = FirebaseDatabase.getInstance().getReference()
+                .child("Users")
+                .child("1UbTozyso3SR8ZY7y0O6mZxTVqd2/Roshetat");
+
+
+        q.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (final DataSnapshot dataSnap : dataSnapshot.getChildren()) {
+                    Log.d("TTTTTT", "onDataChange: " + dataSnap.toString());
+
+                    for (final DataSnapshot tData : dataSnap.child("Rosheta").getChildren()) {
+                        Log.d("TTTTTTT", "onDataChange: " + tData.toString());
+
+                        for (final DataSnapshot l : tData.getChildren()) {
+                            Log.d("TTTTTTTT", "onDataChange: " + l.toString());
+                            Drugs drug=l.getValue(Drugs.class);
+                                drugs.add(drug);
+                                Log.d("TTTTTTTT", "onDataChange: " + drugs.size());
+
+
+                        }
+                    }
+                }
+
+                addMedcineAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
     }
 }

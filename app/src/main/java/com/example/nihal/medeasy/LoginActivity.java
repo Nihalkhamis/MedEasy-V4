@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.nihal.medeasy.Utils.Constants;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -21,6 +22,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.orhanobut.hawk.Hawk;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -66,6 +68,7 @@ public class LoginActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 FirebaseUser user = task.getResult().getUser();
                                 loding.dismiss();
+                                Hawk.put(Constants.userID,user.getUid());
                                 databaseReference=FirebaseDatabase.getInstance().getReference();
                                 databaseReference.child("Users").child(user.getUid()).child("Info").child("type").addValueEventListener(new ValueEventListener() {
                                     @Override

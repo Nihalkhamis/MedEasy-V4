@@ -11,6 +11,8 @@ public  class Drugs {
         this.to = to;
     }
 
+    public Drugs() {
+    }
 
     public String getName() {
         return name;
